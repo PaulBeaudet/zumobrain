@@ -1,0 +1,41 @@
+<!-- bot.html ~ Copyright 2016 Paul Beaudet ~ MIT License -->
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href='bower_components/bootstrap/dist/css/bootstrap.min.css'>
+        <link rel="stylesheet" type="text/css" href='bower_components/bootstrap/dist/css/bootstrap-theme.min.css'>
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <title>Bot Controller</title>
+    </head>
+    <body>
+        <div class="app container">
+            <div id="deviceready" class="row text-center">
+                <span id='status'>Plug in Arduino, press connect</span>
+                <button id='sConnect' class='btn btn-lg btn-success'>Connect</button>
+            </div>
+            <div class='row text-center'>
+                <span id='output'>Output will go here</span>
+            </div>
+            <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+                <div class="navbar-text form-group">
+                    <div class="col-xs-12 input-group input-group-lg">
+                        <input id='textEntry' class='form-control' type="text">
+                        <span id='sendButton' class='input-group-btn'>
+                            <button class="btn btn-info btn-lg pull-right" type="button">Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bot.js"></script>
+    </body>
+</html>

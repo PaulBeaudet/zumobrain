@@ -1,0 +1,6 @@
+# Personal ignorance
+www/bower_components
+platforms
+hooks
+plugins/cordova-plugin-whitelist
+www/img
