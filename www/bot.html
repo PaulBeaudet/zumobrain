@@ -4,7 +4,7 @@
 
 <html>
     <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; connect-src 'self' http://192.168.1.84:3000">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; connect-src 'self' wss://telezumo.herokuapp.com https://telezumo.herokuapp.com stun:stun.l.google.com:19302">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -15,6 +15,12 @@
     </head>
     <body>
         <div class="app container">
+            <div class="row">
+                <div id="videos">
+                    <video id="localVid" width='150', height='50', autoplay></video>
+                    <video id="remoteVid" width='150', height='50', autoplay></video>
+                </div>
+            </div>
             <div id="deviceready" class="row text-center">
                 <span id='status'>Plug in Arduino, press connect</span>
                 <button id='sConnect' class='btn btn-lg btn-success'>Connect</button>
@@ -23,8 +29,11 @@
                 <span id='output'>Output will go here</span>
                 <button id='remote' class='btn btn-lg btn-success'>remote refresh</button>
             </div>
-            <div class="row text-center">
+            <div class='row text-center'>
                 <span id='status2'>incoming socket info</span>
+            </div>
+            <div class='row'>
+                <video id='remoteVid' width="250" height="150" autoplay></video>
             </div>
             <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
                 <div class="navbar-text form-group">
