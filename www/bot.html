@@ -15,7 +15,7 @@
     <body>
         <div class="app container">
             <div class="row">
-                <video id="localVid" width='100%', height='200', autoplay></video>
+                <video id="remoteVid" width='100%', height='200', autoplay></video>
             </div>
             <div id="deviceready" class="row text-center">
                 <span id='status'>Plug in Arduino, press connect</span>
@@ -23,24 +23,11 @@
             </div>
             <div class='row text-center'>
                 <span id='output'>Output will go here</span>
-                <button id='remote' class='btn btn-lg btn-success'>remote refresh</button>
+                <button id='refresh' class='btn btn-lg btn-success'>remote refresh</button>
             </div>
             <div class='row text-center'>
                 <span id='status2'>incoming socket info</span>
                 <button id='videoBTN' class='btn btn-lg btn-success'>video connect</button>
-            </div>
-            <div class="row">
-                <video id="remoteVid" width='100%', height='200', autoplay></video>
-            </div>
-            <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-                <div class="navbar-text form-group">
-                    <div class="col-xs-12 input-group input-group-lg">
-                        <input id='textEntry' class='form-control' type="text">
-                        <span id='sendButton' class='input-group-btn'>
-                            <button class="btn btn-info btn-lg pull-right" type="button">Send</button>
-                        </span>
-                    </div>
-                </div>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
