@@ -4,3 +4,4 @@ platforms
 hooks
 plugins/cordova-plugin-whitelist
 www/img
+www/placeholder
