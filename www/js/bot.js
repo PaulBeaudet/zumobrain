@@ -34,9 +34,9 @@ var arduino = {
         if(view.length){
             for(var i=0; i < view.length; i++){
                 if(view[i] == 13){
-                    $('#output').text(arduino.tempIn);  // print serialln
-                    sock.send('data', arduino.tempIn);  // relay read data to server
-                    arduino.tempIn = '';                // reset temp in
+                    $('#output').text(arduino.tempIn);                 // output serialln
+                    sock.send('data', JSON.stringify(arduino.tempIn)); // relay read data to server
+                    arduino.tempIn = '';                               // reset temp in
                 } else {
                     arduino.tempIn += unescape(escape(String.fromCharCode(view[i])));
                 }
