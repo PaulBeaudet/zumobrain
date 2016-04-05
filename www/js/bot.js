@@ -35,9 +35,9 @@ var arduino = {
         if(view.length){
             for(var i=0; i < view.length; i++){
                 if(view[i] == 13){
-                    $('#output').text(arduino.tempIn);                 // output serialln
+                    $('#output').text(arduino.tempIn); // output serialln
                     sock.send('data', arduino.tempIn); // relay read data to server
-                    arduino.tempIn = '';                               // reset temp in
+                    arduino.tempIn = '';               // reset temp in
                 } else {
                     arduino.tempIn += unescape(escape(String.fromCharCode(view[i])));
                 }
@@ -132,8 +132,8 @@ sock = {
         sock.et.on('ice', function(info){signal.recepient(info, 'ice');}); // get ip information
         sock.et.on('sdp', function(info){signal.recepient(info, 'sdp');}); // get video codec information
     },
-    send: function(type, nfo){
-        if(sock.master){sock.et.emit(type, {to:sock.master, nfo:data});}
+    send: function(type, data){
+        if(sock.master){sock.et.emit(type, {to:sock.master, data:data});}
     },
 }
 
