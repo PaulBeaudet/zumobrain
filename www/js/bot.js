@@ -115,9 +115,8 @@ sock = {
     },
     init: function(){
         $('#refresh').hide();
-        sock.et.on('botFind', function(from){
-            sock.et.emit('here', {id:from, status: sock.status});
-        });
+        sock.et.emit('here', {id:false, status:'open'}); // broadcast availibility to masters that are already online
+        sock.et.on('botFind', function(from){sock.et.emit('here', {id:from, status: sock.status});});
         sock.et.on('own', function(from){
             if(sock.master !== from){  // relinquish control case
                 video.init();          // give ability to connect video
