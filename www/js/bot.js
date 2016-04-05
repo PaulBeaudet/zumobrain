@@ -93,7 +93,7 @@ var video = {
         if(navigator.getUserMedia){
             navigator.getUserMedia({video: true, audio: true,}, function(stream){
                 video.stream = stream;
-                $('#videoBTN').show().on('click', function(){signal.peerConnect(true);});
+                signal.peerConnect(true);
             }, utils.error);
         } else { utils.error('Telepresence, not supported on this device'); }
     },
