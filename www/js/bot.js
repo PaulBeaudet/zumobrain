@@ -123,7 +123,14 @@ sock = {
                 video.init();          // give ability to connect video
                 sock.master = from;    // robot's master is defined!
                 sock.status = 'taken'; // denote robot is being controled for admins
-                sock.et.emit('here', {id:'false', status:'taken'}); // broadcast bot has been taken
+                sock.et.emit('here', {id:false, status:'taken'}); // broadcast bot has been taken
+            }
+        });
+        sock.et.on('relinquish', function(master){
+            if(master = sock.master){
+                sock.master = null;
+                sock.status = 'open';
+                sock.et.emit('here', {id:false, status: sock.status});
             }
         });
         sock.et.on('remote', arduino.remote);                              // relay remote control events
