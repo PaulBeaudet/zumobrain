@@ -14,7 +14,6 @@ var app = {
     },
     onDeviceReady: function() {                         // deviceready Event Handler
         sock.connect();                                 // socket connect event
-        video.init();                                   // get bot video stream
         $('#sConnect').show().on('click', arduino.ask); // on click ask if we can connect to the arduino
     }
 };
@@ -96,9 +95,7 @@ var video = {
                 video.stream = stream;
                 $('#videoBTN').show().on('click', function(){signal.peerConnect(true);});
             }, utils.error);
-        } else {
-            utils.error('Telepresence, not supported on this device');
-        }
+        } else { utils.error('Telepresence, not supported on this device'); }
     },
     remoteStream: function(event){
         document.getElementById('remoteVid').src = window.URL.createObjectURL(event.stream);
@@ -123,6 +120,7 @@ sock = {
         });
         sock.et.on('own', function(from){
             if(sock.master !== from){  // relinquish control case
+                video.init();          // give ability to connect video
                 sock.master = from;    // robot's master is defined!
                 sock.status = 'taken'; // denote robot is being controled for admins
                 sock.et.emit('here', {id:'false', status:'taken'}); // broadcast bot has been taken
