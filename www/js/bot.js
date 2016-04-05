@@ -1,5 +1,6 @@
 // bot.js ~ Copyright 2016 Paul Beaudet ~ MIT License
-var SERVER = 'https://telezumo.herokuapp.com'; // add YOUR server here
+var SERVER = 'http://192.168.1.84:3000'; // test on your local server
+// var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR server here
 
 var app = {
     initialize: function(){    // Application Constructor
@@ -35,7 +36,7 @@ var arduino = {
             for(var i=0; i < view.length; i++){
                 if(view[i] == 13){
                     $('#output').text(arduino.tempIn);                 // output serialln
-                    sock.send('data', JSON.stringify(arduino.tempIn)); // relay read data to server
+                    sock.send('data', arduino.tempIn); // relay read data to server
                     arduino.tempIn = '';                               // reset temp in
                 } else {
                     arduino.tempIn += unescape(escape(String.fromCharCode(view[i])));
@@ -124,15 +125,15 @@ sock = {
             if(sock.master !== from){  // relinquish control case
                 sock.master = from;    // robot's master is defined!
                 sock.status = 'taken'; // denote robot is being controled for admins
-                sock.et.emit('here', {status: 'taken'}); // broadcast bot has been taken
+                sock.et.emit('here', {id:'false', status:'taken'}); // broadcast bot has been taken
             }
         });
         sock.et.on('remote', arduino.remote);                              // relay remote control events
         sock.et.on('ice', function(info){signal.recepient(info, 'ice');}); // get ip information
         sock.et.on('sdp', function(info){signal.recepient(info, 'sdp');}); // get video codec information
     },
-    send: function(type, data){
-        if(sock.master){sock.et.emit(type, {to:sock.master, data:data});}
+    send: function(type, nfo){
+        if(sock.master){sock.et.emit(type, {to:sock.master, nfo:data});}
     },
 }
 
