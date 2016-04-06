@@ -1,6 +1,6 @@
 // bot.js ~ Copyright 2016 Paul Beaudet ~ MIT License
 // var SERVER = 'http://192.168.1.84:3000'; // test on YOUR local server here
-var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR server here
+var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR public server here
 
 var arduino = {  // code for controling the arduino, NOTE: braided w/socket events
     tempIn: '',  // empty string to hold incoming serial data
@@ -10,7 +10,7 @@ var arduino = {  // code for controling the arduino, NOTE: braided w/socket even
     });},
     open: function(){
         serial.open({baudRate: 9600, sleepOnPause: false}, function(msg){        // provide settings and success callback
-            sock.et.emit('here', {id:false, status:'open'});                     // broadcast readyness to remotes
+            sock.broadcastState('open');                                         // broadcast readyness to remotes
             $('#sConnect').show().off().text('stop').on('click', arduino.close); // give ability to close connection
             serial.registerReadCallback(arduino.read, utils.error);              // set read callback
             $('#status').text(msg);                                              // show status of serial port
@@ -35,9 +35,9 @@ var arduino = {  // code for controling the arduino, NOTE: braided w/socket even
     },
     close: function(){
         serial.close(function(){
-            $('#status').text('closed serial port and remote connections');// show what just happend
-            sock.et.emit('here', {id:false, status:'taken'});              // broadcast taken status to remotes
-            $('#sConnect').off().text('connect').on('click', arduino.ask); // onclick ask if we can connect to the arduino
+            $('#status').text('closed serial port and remote connections'); // show what just happend
+            sock.broadcastState('down');                                    // broadcast downed status to remotes
+            $('#sConnect').off().text('connect').on('click', arduino.ask);  // onclick ask if we can connect to the arduino
         }, utils.error);
     },
     remote: function(data){serial.write(data, function(){$('#status2').text('sent ' + data);}, utils.error);}
@@ -53,12 +53,14 @@ window.URL = window.URL || window.webkitURL;
 var signal = {
     peer: null, // placeholder for our peer connection object
     peerConnect: function(amIfirst){
-        signal.peer = new window.RTCPeerConnection({ 'iceServers': [{'url': 'stun:stun.l.google.com:19302'}] });
-        signal.peer.onicecandidate = function (event) { // on address info being introspected from external "stun" server
-            if (event.candidate != null) { sock.send('ice', JSON.stringify(event.candidate)); }
-        }; // null === finished finding info to describe ones own address, ie "canidate" address paths
-        signal.peer.onaddstream = video.remoteStream;          // display remote video stream when it comes in
-        if(video.stream){signal.peer.addStream(video.stream);} // make our video stream sharable
+        if(video.stream){
+            signal.peer = new window.RTCPeerConnection({ 'iceServers': [{'url': 'stun:stun.l.google.com:19302'}] });
+            signal.peer.onicecandidate = function (event) { // on address info being introspected
+                if (event.candidate != null) { sock.send('ice', JSON.stringify(event.candidate)); }
+            }; // null === finished finding info to describe ones own address, ie "canidate" address paths
+            signal.peer.onaddstream = video.remoteStream;   // display remote video stream when it comes in
+            signal.peer.addStream(video.stream);            // make our video stream sharable
+        }
         if(amIfirst){ signal.peer.createOffer(signal.onSession, utils.error);}
     },
     recepient: function(info, type){
@@ -80,11 +82,10 @@ var signal = {
 
 var video = {
     stream: null,
-    init: function(){
+    get: function(){
         if(navigator.getUserMedia){
             navigator.getUserMedia({video: true, audio: true,}, function(stream){
                 video.stream = stream;
-                signal.peerConnect(true);
             }, utils.error);
         } else { utils.error('Telepresence, not supported on this device'); }
     },
@@ -97,23 +98,21 @@ var utils = {error: function(err){$('#status2').text('error:'+err);}}
 
 sock = {             // socket.io event listeners and variables for bot status
     et: false,       // need to try to connect before getting to excited
-    status: 'taken', // detects whether bot is being controled or not
+    status: 'down',  // detects whether bot is being controled or not
     master: null,    // user allowed to control this bot
     init: function(){
         sock.et.on('botFind', function(from){sock.et.emit('here', {id:from, status: sock.status});});
-        sock.et.on('own', function(from){
-            if(sock.master !== from){  // relinquish control case
-                video.init();          // give ability to connect video
-                sock.master = from;    // robot's master is defined! yousa gone save my life!
-                sock.status = 'taken'; // denote robot is being controled for admins
-                sock.et.emit('here', {id:false, status:'taken'}); // broadcast bot has been taken
-            }
+        sock.et.on('own', function(from){ // listen for a remote to take control
+            signal.peerConnect(true);     // share our video w/ master
+            sock.master = from;           // yousa gone save my life! mesa you slave
+            sock.broadcastState('taken'); // broadcast newfound enslavement of remote overlord
         });
         sock.et.on('relinquish', function(master){ // NOTE this is a broadcasted event we are listening for
-            if(master = sock.master){  // check if this is our master that has bared the gift of a sock
-                sock.master = null;    // Dolby is FREEEE!
-                sock.status = 'open';  // set status persitently so we can respond to indivdual botFind calls
-                sock.et.emit('here', {id:false, status: 'open'});     // broadcast newfound freedom
+            if(master === sock.master){            // check if this is our master that has bared the gift of a sock
+                sock.master = null;                // Dolby is FREEEE!
+                if(sock.status === 'taken'){       // only if previously taken
+                    sock.broadcastState('open');   // broadcast newfound freedom
+                }
             }
         });
         sock.et.on('remote', arduino.remote);                              // relay remote control events
@@ -123,6 +122,10 @@ sock = {             // socket.io event listeners and variables for bot status
     send: function(type, data){
         if(sock.master){sock.et.emit(type, {to:sock.master, data:data});}
     },
+    broadcastState: function(state){
+        sock.status = state; // set status persitently so we can respond to indivdual botFind calls
+        sock.et.emit('here', {id:false, status:state}); // Broadcast status
+    }
 }
 
 var app = {                    // event listeners for cordova
@@ -140,6 +143,7 @@ var app = {                    // event listeners for cordova
         sock.et.on('connect', function(){                                      // on succesfull connection to server
             $('#refresh').hide();                                              // hide refresh button if it was shown
             sock.init();                                                       // set event listeners
+            video.get();                                                       // get video if it is availible
             arduino.ask();                                                     // ask for permission to use USB
         });
     }
