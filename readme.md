@@ -10,5 +10,7 @@ To make this application work the following are needed
 
 Maybe more instructions as they are needed, file an issue
 
+I'm still deciding how I want to properly track a cordova project, the way this is versioned is probably not helpfull, sorry I'll fix it when I figure it out
 
 Copyright 2016 Paul Beaudet MIT License
+
