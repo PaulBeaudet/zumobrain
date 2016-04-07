@@ -1,6 +1,6 @@
 // bot.js ~ Copyright 2016 Paul Beaudet ~ MIT License
-// var SERVER = 'http://192.168.1.84:3000'; // test on YOUR local server here
-var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR public server here
+var SERVER = 'http://192.168.1.84:3000'; // test on YOUR local server here
+// var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR public server here
 
 var arduino = {  // code for controling the arduino, NOTE: braided w/socket events
     tempIn: '',  // empty string to hold incoming serial data
@@ -8,8 +8,8 @@ var arduino = {  // code for controling the arduino, NOTE: braided w/socket even
         utils.error(err);                                                                        // else show error
         $('#sConnect').show().off().text('USB pemission needed:Retry').on('click', arduino.ask); // try again option
     });},
-    open: function(){
-        serial.open({baudRate: 9600, sleepOnPause: false}, function(msg){        // provide settings and success callback
+    open: function(){ // provide settings and success callback to serial open
+        serial.open({baudRate: 115200, sleepOnPause: false}, function(msg){
             sock.broadcastState('open');                                         // broadcast readyness to remotes
             $('#sConnect').show().off().text('stop').on('click', arduino.close); // give ability to close connection
             serial.registerReadCallback(arduino.read, utils.error);              // set read callback
