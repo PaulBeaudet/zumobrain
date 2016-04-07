@@ -78,6 +78,10 @@ var signal = {
             sock.send('sdp', JSON.stringify(signal.peer.localDescription)); // send discription of connection type
         }, utils.error);
     },
+    disconnect: function(){
+        signal.peer.close(); // close peer connection
+        signal.peer = null;  // set connection back to null in prep for a new one
+    }
 }
 
 var video = {
@@ -111,6 +115,7 @@ sock = {             // socket.io event listeners and variables for bot status
             if(master === sock.master){            // check if this is our master that has bared the gift of a sock
                 sock.master = null;                // Dolby is FREEEE!
                 if(sock.status === 'taken'){       // only if previously taken
+                    signal.disconnect();           // disconnect last video interaction
                     sock.broadcastState('open');   // broadcast newfound freedom
                 }
             }
