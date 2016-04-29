@@ -14,7 +14,7 @@ In order to set up this application. Once cordova and Android SDK installed prop
 
 To push the application on an android device run
 
-```cordova run android'''
+```cordova run android```
 
 
 Copyright 2016 Paul Beaudet MIT License
