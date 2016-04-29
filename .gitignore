@@ -2,6 +2,6 @@
 www/bower_components
 platforms
 hooks
-plugins/cordova-plugin-whitelist
+plugins
 www/img
 www/placeholder

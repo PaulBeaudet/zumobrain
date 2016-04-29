@@ -8,9 +8,9 @@ To make this application work the following are needed
 * An Arduino powered robot like the [Zumo](https://www.pololu.com/category/129/zumo-robots-and-accessories)
 * Code for your Arduino powered robot [zumoTesting](https://github.com/PaulBeaudet/zumoTesting)
 
-Maybe more instructions as they are needed, file an issue
+In order to set up this set up application once cordova and the Android SDK are installed
 
-I'm still deciding how I want to properly track a cordova project, the way this is versioned is probably not helpfull, sorry I'll fix it when I figure it out
+```cordova prepare```
 
 Copyright 2016 Paul Beaudet MIT License
 
