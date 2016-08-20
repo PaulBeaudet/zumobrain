@@ -1,5 +1,5 @@
 // bot.js ~ Copyright 2016 Paul Beaudet ~ MIT License
-var SERVER = 'http://192.168.1.84:3000'; // test on YOUR local server here
+var SERVER = 'http://192.168.1.81:3000'; // test on YOUR local server here
 // var SERVER = 'https://telezumo.herokuapp.com'; // or add YOUR public server here
 
 var arduino = {  // code for controling the arduino, NOTE: braided w/socket events
@@ -36,7 +36,7 @@ var arduino = {  // code for controling the arduino, NOTE: braided w/socket even
     close: function(){
         serial.close(function(){
             $('#status').text('closed serial port and remote connections'); // show what just happend
-            sock.broadcastState('down');                                    // broadcast downed status to remotes
+            sock.broadcastState('noBot');                                    // broadcast downed status to remotes
             $('#sConnect').off().text('connect').on('click', arduino.ask);  // onclick ask if we can connect to the arduino
         }, utils.error);
     },
@@ -102,10 +102,10 @@ var utils = {error: function(err){$('#status2').text('error:'+err);}}
 
 sock = {             // socket.io event listeners and variables for bot status
     et: false,       // need to try to connect before getting to excited
-    status: 'down',  // detects whether bot is being controled or not
+    status: 'noBot',  // detects whether bot is being controled or not
     master: null,    // user allowed to control this bot
     init: function(){
-        sock.et.on('botFind', function(from){sock.et.emit('here', {id:from, status: sock.status});});
+        sock.et.on('botFind', function(from){sock.et.emit('here', {id:from, status: sock.status, type: "phone"});});
         sock.et.on('own', function(from){ // listen for a remote to take control
             signal.peerConnect(true);     // share our video w/ master
             sock.master = from;           // yousa gone save my life! mesa you slave
@@ -128,8 +128,8 @@ sock = {             // socket.io event listeners and variables for bot status
         if(sock.master){sock.et.emit(type, {to:sock.master, data:data});}
     },
     broadcastState: function(state){
-        sock.status = state; // set status persitently so we can respond to indivdual botFind calls
-        sock.et.emit('here', {id:false, status:state}); // Broadcast status
+        sock.status = state;  // set status persitently so we can respond to indivdual botFind calls
+        sock.et.emit('here', {id:false, status:state, type: "phone"}); // Broadcast status
     }
 }
 
